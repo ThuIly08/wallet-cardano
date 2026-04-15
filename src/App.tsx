@@ -1,121 +1,97 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
-import './App.css'
+import { Tabs } from "@mantine/core";
+import "./App.css";
+import { Item, NativeTab, TransactionTab } from "./components";
+import { useState } from "react";
+import { getAddressData } from "./apis/address";
+import { EternlSvg, LaceSvg, NamiSvg } from "./components/svg";
 
 function App() {
-  const [count, setCount] = useState(0)
-
+  const [dataAddress, setDataAddress] = useState<any>([]);
+  const handleFetchAddressData = async (address: string) => {
+    try {
+      const res = await getAddressData(address);
+      setDataAddress(res.data);
+      console.log(res);
+    } catch (err) {
+      console.log(err);
+    }
+  };
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
+    <div className="w-screen flex flex-col items-center gap-5 py-6">
+      <div
+        className="text-[#141413] font-medium text-[18px] w-186 h-10 items-center flex rounded-[12px] 
+      text-left border border-[#1F1E1D26] overflow-hidden"
+      >
+        <img src="./logoCardano.jpg" className="object-fit w-fit h-full" />
+        Cardano Wallet Explorer
+      </div>
+      <div
+        className="text-[#3d3d3a] font-medium text-[14px] px-5 w-186 h-10 items-center flex rounded-[12px] 
+      text-left border border-[#1F1E1D26] bg-[#f5f4ed]"
+      >
+        Connect browser wallet
+        <div className="flex flex-row gap-2 ml-auto items-center text-[#141413] text-[11px]">
+          <div className="bg-white px-3 py-1 rounded-full w-fit border border-[#1F1E1D26] flex flex-row items-center gap-1">
+            <NamiSvg />
+            Nami
+          </div>
+          <div className="bg-white px-3 py-1 rounded-full w-fit border border-[#1F1E1D26] flex flex-row items-center gap-1">
+            <EternlSvg />
+            Eternl
+          </div>
+          <div className="bg-white px-3 py-1 rounded-full w-fit border border-[#1F1E1D26] flex flex-row items-center gap-1">
+            <LaceSvg />
+            Lace
+          </div>
         </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.tsx</code> and save to test <code>HMR</code>
-          </p>
+      </div>
+      <div className="flex flex-row items-center gap-3">
+        <div>Address mock</div>
+        <div>Look up</div>
+      </div>
+      <div className="flex flex-row items-center gap-3">
+        <Item title="title1" value="mock value 1" subtitle="subtitle 1" />
+        <Item title="title1" value="mock value 1" subtitle="subtitle 1" />
+        <Item title="title1" value="mock value 1" subtitle="subtitle 1" />
+      </div>
+      <div className="flex flex-row items-center gap-3 border border-[#1F1E1D26] rounded-[20px] bg-white px-5 py-3 w-186">
+        <div className="flex flex-col gap-1">
+          <div className="text-[#3D3D3A] text-[14px] font-medium">
+            Stake address
+          </div>
+          <div className="text-[#141413] text-[12px]">Stake address mock</div>
         </div>
-        <button
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
-
-      <div className="ticks"></div>
-
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
+        <div className="flex flex-col gap-1">
+          <div className="text-[#3D3D3A] text-[14px] font-medium">
+            Stake address
+          </div>
+          <div className="text-[#141413] text-[12px]">Stake address mock</div>
         </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
+        <div className="flex flex-col gap-1">
+          <div className="text-[#3D3D3A] text-[14px] font-medium">
+            Stake address
+          </div>
+          <div className="text-[#141413] text-[12px]">Stake address mock</div>
         </div>
-      </section>
-
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
-  )
+      </div>
+      <Tabs defaultValue="gallery" className="w-186">
+        <Tabs.List>
+          <Tabs.Tab value="gallery" className="w-93">
+            Native tokens
+          </Tabs.Tab>
+          <Tabs.Tab value="messages" className="w-93">
+            Transaction history
+          </Tabs.Tab>
+        </Tabs.List>
+        <Tabs.Panel value="gallery">
+          <NativeTab />
+        </Tabs.Panel>
+        <Tabs.Panel value="messages">
+          <TransactionTab />
+        </Tabs.Panel>
+      </Tabs>
+    </div>
+  );
 }
 
-export default App
+export default App;
