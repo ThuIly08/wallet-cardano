@@ -8,7 +8,7 @@ export function Item({
   subtitle?: string;
 }) {
   return (
-    <div className="flex flex-col gap-1 items-start rounded-[20px] px-5 py-3 bg-[#f5f4ed] w-60">
+    <div className="flex flex-col gap-1 items-start rounded-[20px] px-5 py-3 bg-[#f5f4ed] w-60 h-25">
       <div className="text-[#3D3D3A] text-[14px] font-medium">{title}</div>
       <div className="text-[#0033AD] text-[22px] font-semibold">{value}</div>
       {subtitle && <div className="text-[#3D3D3A] text-[12px]">{subtitle}</div>}

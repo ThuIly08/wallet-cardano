@@ -1,19 +1,25 @@
-import { Tabs } from "@mantine/core";
+import { Input, Tabs } from "@mantine/core";
 import "./App.css";
 import { Item, NativeTab, TransactionTab } from "./components";
 import { useState } from "react";
-import { getAddressData } from "./apis/address";
+import { getAddressData, getAddressUTXOs } from "./apis/address";
 import { EternlSvg, LaceSvg, NamiSvg } from "./components/svg";
 
 function App() {
-  const [dataAddress, setDataAddress] = useState<any>([]);
-  const handleFetchAddressData = async (address: string) => {
+  const [address, setAddress] = useState<string | undefined>(undefined);
+  //eslint-disable-next-line
+  const [dataAddress, setDataAddress] = useState<any>(undefined);
+  //eslint-disable-next-line
+  const [dataUTXOs, setDataUTXOs] = useState<any>(undefined);
+  const handleFetchAddressData = async (address: string | undefined) => {
     try {
       const res = await getAddressData(address);
+      const resUTXOs = await getAddressUTXOs(address);
       setDataAddress(res.data);
-      console.log(res);
+      setDataUTXOs(resUTXOs.data);
+      console.log(res.data, resUTXOs);
     } catch (err) {
-      console.log(err);
+      console.log("Địa chỉ sai định dạng: ", err);
     }
   };
   return (
@@ -45,33 +51,92 @@ function App() {
           </div>
         </div>
       </div>
-      <div className="flex flex-row items-center gap-3">
-        <div>Address mock</div>
-        <div>Look up</div>
+      <div className="flex flex-row items-center gap-3 w-186">
+        <Input
+          placeholder="Wallet address (Bench32 format)"
+          className="w-160"
+          size="xs"
+          value={address}
+          onChange={(e) => {
+            setAddress(e.target.value);
+          }}
+        />
+        <div
+          className="cursor-pointer rounded-[8px] flex-1 w-full 
+          border border-[#1f1e1d66] text-[14px] font-medium px-3 py-1 flex justify-center items-center"
+          onClick={() => {
+            handleFetchAddressData(address);
+          }}
+        >
+          Look up
+        </div>
+      </div>
+      <div className="flex flex-row items-center gap-3 w-186">
+        <Input
+          placeholder="Wallet address (stake1 format)"
+          className="w-full"
+          size="xs"
+          onChange={(e) => {
+            setAddress(e.target.value);
+          }}
+        />
+        <div
+          className="cursor-pointer rounded-[8px] w-60
+          border border-[#1f1e1d66] text-[14px] font-medium px-3 py-1 flex justify-center items-center"
+          onClick={() => {
+            console.log("Hello ni");
+          }}
+        >
+          Look up for stake address
+        </div>
       </div>
       <div className="flex flex-row items-center gap-3">
-        <Item title="title1" value="mock value 1" subtitle="subtitle 1" />
-        <Item title="title1" value="mock value 1" subtitle="subtitle 1" />
-        <Item title="title1" value="mock value 1" subtitle="subtitle 1" />
+        <Item
+          title="ADA Balance"
+          value={
+            dataAddress
+              ? (
+                  Number(dataAddress.amount[0].quantity) / 1_000_000
+                ).toLocaleString("en-US")
+              : "N.A"
+          }
+          subtitle={
+            dataAddress
+              ? `${Number(dataAddress.amount[0].quantity).toLocaleString("en-US")} Lovelace`
+              : "N.A Lovelace"
+          }
+        />
+        <Item
+          title="Native tokens"
+          value={dataAddress ? String(dataAddress.amount.length - 1) : "N.A"}
+        />
+        <Item
+          title="eUTXO count"
+          value={dataUTXOs ? String(dataUTXOs.length) : "N.A"}
+          subtitle="unspent outputs"
+        />
       </div>
-      <div className="flex flex-row items-center gap-3 border border-[#1F1E1D26] rounded-[20px] bg-white px-5 py-3 w-186">
-        <div className="flex flex-col gap-1">
+      <div className="flex flex-row items-start gap-3 border border-[#1F1E1D26] rounded-[20px] bg-white px-5 py-3 w-186 h-auto">
+        <div className="flex flex-col gap-1 w-30">
           <div className="text-[#3D3D3A] text-[14px] font-medium">
             Stake address
           </div>
-          <div className="text-[#141413] text-[12px]">Stake address mock</div>
+          <div className="text-[#141413] text-[12px] break-all">
+            {dataAddress ? <div>{dataAddress.stake_address}</div> : "N.A"}
+          </div>
         </div>
-        <div className="flex flex-col gap-1">
+        <div className="flex flex-col gap-1 w-110">
           <div className="text-[#3D3D3A] text-[14px] font-medium">
-            Stake address
+            Delegated pool
           </div>
-          <div className="text-[#141413] text-[12px]">Stake address mock</div>
+          <div className="text-[#141413] text-[12px]">N.A</div>
         </div>
-        <div className="flex flex-col gap-1">
+        <div className="flex flex-col gap-1 w-40">
           <div className="text-[#3D3D3A] text-[14px] font-medium">
-            Stake address
+            Accumulate rewards
           </div>
-          <div className="text-[#141413] text-[12px]">Stake address mock</div>
+          <div className="text-[#141413] text-[12px]">N.A</div>
+          <div className="text-[#3D3D3A] text-[14px]">Ready to withdraw</div>
         </div>
       </div>
       <Tabs defaultValue="gallery" className="w-186">
