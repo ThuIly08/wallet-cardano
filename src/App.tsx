@@ -4,6 +4,7 @@ import { Item, NativeTab, TransactionTab } from "./components";
 import { useState } from "react";
 import { getAddressData, getAddressUTXOs } from "./apis/address";
 import { EternlSvg, LaceSvg, NamiSvg } from "./components/svg";
+import { getRewardsNow } from "./apis/stake";
 
 function App() {
   const [address, setAddress] = useState<string | undefined>(undefined);
@@ -11,13 +12,18 @@ function App() {
   const [dataAddress, setDataAddress] = useState<any>(undefined);
   //eslint-disable-next-line
   const [dataUTXOs, setDataUTXOs] = useState<any>(undefined);
+  //eslint-disable-next-line
+  const [dataRewards, setDataRewards] = useState<any>(undefined);
   const handleFetchAddressData = async (address: string | undefined) => {
     try {
       const res = await getAddressData(address);
       const resUTXOs = await getAddressUTXOs(address);
+      if (res.data) {
+        const resReward = await getRewardsNow(res.data.stake_address);
+        setDataRewards(resReward.data);
+      }
       setDataAddress(res.data);
       setDataUTXOs(resUTXOs.data);
-      console.log(res.data, resUTXOs);
     } catch (err) {
       console.log("Địa chỉ sai định dạng: ", err);
     }
@@ -129,29 +135,45 @@ function App() {
           <div className="text-[#3D3D3A] text-[14px] font-medium">
             Delegated pool
           </div>
-          <div className="text-[#141413] text-[12px]">N.A</div>
+          <div className="text-[#141413] text-[12px] break-all">
+            {dataRewards?.pool_id ? <div>{dataRewards.pool_id}</div> : "N.A"}
+          </div>
         </div>
         <div className="flex flex-col gap-1 w-40">
           <div className="text-[#3D3D3A] text-[14px] font-medium">
             Accumulate rewards
           </div>
-          <div className="text-[#141413] text-[12px]">N.A</div>
+          <div className="text-[#141413] text-[12px]">
+            {dataRewards?.withdrawable_amount ? (
+              <div>
+                {(
+                  Number(dataRewards.withdrawable_amount) / 1000000
+                ).toLocaleString("en-US")}
+              </div>
+            ) : (
+              "N.A"
+            )}
+          </div>
           <div className="text-[#3D3D3A] text-[14px]">Ready to withdraw</div>
         </div>
       </div>
-      <Tabs defaultValue="gallery" className="w-186">
+      <Tabs defaultValue="native" className="w-186">
         <Tabs.List>
-          <Tabs.Tab value="gallery" className="w-93">
-            Native tokens
+          <Tabs.Tab value="native" className="w-93">
+            <div className="font-medium text-[13px] text-[#3d3d3a]">
+              Native tokens
+            </div>
           </Tabs.Tab>
-          <Tabs.Tab value="messages" className="w-93">
-            Transaction history
+          <Tabs.Tab value="transaction" className="w-93">
+            <div className="font-medium text-[13px] text-[#3d3d3a]">
+              Transaction history
+            </div>
           </Tabs.Tab>
         </Tabs.List>
-        <Tabs.Panel value="gallery">
+        <Tabs.Panel value="native">
           <NativeTab />
         </Tabs.Panel>
-        <Tabs.Panel value="messages">
+        <Tabs.Panel value="transaction">
           <TransactionTab />
         </Tabs.Panel>
       </Tabs>
