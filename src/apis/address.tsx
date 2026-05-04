@@ -1,6 +1,6 @@
 import axios from "axios";
 
-//trả về data của Address
+//trả về data của Address (bench32)
 export async function getAddressData(address: string | undefined) {
   const res = await axios.get(
     `${import.meta.env.VITE_BASE_URL}/addresses/${address}`,
